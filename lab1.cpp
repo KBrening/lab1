@@ -1,6 +1,6 @@
-//1
+//
 //modified by: Keelan Brening
-//date:1/25/18
+//date:2/07/18
 //
 //3350 Spring 2018 Lab-1
 //This program demonstrates the use of OpenGL and XWindows
@@ -63,22 +63,27 @@ struct Particle {
 class Global {
     public:
 	int xres, yres;
-	Shape box;
-	Shape box2;
+	Shape box[5];
 	Particle particle[MAX_PARTICLES];
 	int n;
 	Global() {
 	    xres = 800;
 	    yres = 600;
 	    //define a box shape
-	    box.width = 75;
-	    box.height = 10;
-	    box.center.x = 180 + 5*65;
-	    box.center.y = 500 - 5*60;
-	    box2.width = 80;
-	    box2.height = 10;
-	    box2.center.x = 50 + 5*65;
-	    box2.center.y = 600 - 5*60;
+	    for(int i = 0; i < 5; i++){
+	    	box[i].width = 75;
+	    	box[i].height = 10;
+	    }
+	    box[0].center.x = 180 + 5*20;
+	    box[0].center.y = 500 - 5*20;
+	    box[1].center.x = 180 + 5*30;
+	    box[1].center.y = 500 - 5*30;
+	    box[2].center.x = 180 + 5*40;
+	    box[2].center.y = 500 - 5*40;
+	    box[3].center.x = 180 + 5*50;
+	    box[3].center.y = 500 - 5*50;
+	    box[4].center.x = 180 + 5*60;
+	    box[4].center.y = 500 - 5*60;
 	    n = 0;
 	}
 } g;
@@ -196,7 +201,7 @@ void makeParticle(int x, int y)
     p->s.center.x = x;
     p->s.center.y = y;
     p->velocity.y = (float)rand() / (float)RAND_MAX * 1.0;
-    p->velocity.x = (float)rand() / (float)RAND_MAX * 1.0 - 0.5;
+    p->velocity.x = (float)rand() / (float)RAND_MAX * 1.0;
     ++g.n;
 }
 
@@ -276,21 +281,53 @@ void movement()
 	p->velocity.y -= GRAVITY;
 
 	//check for collision with shapes...
-	Shape *s = &g.box;
-	//Shape *s2 = &g.box2;
-	if(p->s.center.y < s->center.y + s->height &&		//collision check for 1st box
-		p->s.center.y > s->center.y - s->height && 
-		p->s.center.x > s->center.x - s->width && 
-		p->s.center.x < s->center.x + s->width //&&
-		//p->s.center.y < s2->center.y + s2->height &&	//collision check for 2nd box
-		//p->s.center.y > s2->center.y - s2->height && 
-		//p->s.center.x > s2->center.x - s2->width && 
-		//p->s.center.x < s2->center.x + s2->width
-	  ){
-	    p->velocity.y = -p->velocity.y;
-	    p->velocity.y *= 0.5;
+	Shape *s1 = &g.box[0];
+	Shape *s2 = &g.box[1];
+	Shape *s3 = &g.box[2];
+	Shape *s4 = &g.box[3];
+	Shape *s5 = &g.box[4];
+
+	if(p->s.center.y < s1->center.y + s1->height &&		//collision check for 1st box
+		p->s.center.y > s1->center.y - s1->height && 
+		p->s.center.x > s1->center.x - s1->width && 
+		p->s.center.x < s1->center.x + s1->width 
+	){
+	   	p->velocity.y = -p->velocity.y;
+	    	p->velocity.y *= 0.5;
+	}
+	if(p->s.center.y < s2->center.y + s2->height &&		//collision check for 1st box
+		p->s.center.y > s2->center.y - s2->height && 
+		p->s.center.x > s2->center.x - s2->width && 
+		p->s.center.x < s2->center.x + s2->width 
+	){
+	   	p->velocity.y = -p->velocity.y;
+	    	p->velocity.y *= 0.5;
 	}
 
+	if(p->s.center.y < s3->center.y + s3->height &&		//collision check for 1st box
+		p->s.center.y > s3->center.y - s3->height && 
+		p->s.center.x > s3->center.x - s3->width && 
+		p->s.center.x < s3->center.x + s3->width 
+	){
+	   	p->velocity.y = -p->velocity.y;
+	    	p->velocity.y *= 0.5;
+	}
+	if(p->s.center.y < s4->center.y + s4->height &&		//collision check for 1st box
+		p->s.center.y > s4->center.y - s4->height && 
+		p->s.center.x > s4->center.x - s4->width && 
+		p->s.center.x < s4->center.x + s4->width 
+	){
+	   	p->velocity.y = -p->velocity.y;
+	    	p->velocity.y *= 0.5;
+	}
+	if(p->s.center.y < s5->center.y + s5->height &&		//collision check for 1st box
+		p->s.center.y > s5->center.y - s5->height && 
+		p->s.center.x > s5->center.x - s5->width && 
+		p->s.center.x < s5->center.x + s5->width 
+	){
+	   	p->velocity.y = -p->velocity.y;
+	    	p->velocity.y *= 0.5;
+	}
 	//check for off-screen
 	if (p->s.center.y < 0.0) {
 	    cout << "off screen" << endl;
@@ -308,34 +345,22 @@ void render()
     //draw a box
     Shape *s;
     glColor3ub(90,140,90);
-    s = &g.box;
-    glPushMatrix();
-    glTranslatef(s->center.x, s->center.y, s->center.z);
-    float w, h;
-    w = s->width;
-    h = s->height;
-    glBegin(GL_QUADS);
-    glVertex2i(-w, -h);
-    glVertex2i(-w,  h);
-    glVertex2i( w,  h);
-    glVertex2i( w, -h);
-    glEnd();
-    glPopMatrix();
+    float w, h = 0;
+    for(int i = 0; i < 5; i++){
+    	s = &g.box[i];
+    	glPushMatrix();
+    	glTranslatef(s->center.x, s->center.y, s->center.z);
+    	w = s->width;
+    	h = s->height;
+    	glBegin(GL_QUADS);
+    	glVertex2i(-w, -h);
+    	glVertex2i(-w,  h);
+    	glVertex2i( w,  h);
+    	glVertex2i( w, -h);
+    	glEnd();
+    	glPopMatrix();
+    }
     //
-    //box 2
-    glColor3ub(90,140,90);
-    s = &g.box2;
-    glPushMatrix();
-    glTranslatef(s->center.x, s->center.y, s->center.z);
-    w = s->width;
-    h = s->height;
-    glBegin(GL_QUADS);
-    glVertex2i(-w, -h);
-    glVertex2i(-w,  h);
-    glVertex2i( w,  h);
-    glVertex2i( w, -h);
-    glEnd();
-    glPopMatrix();
     
     //Draw the particle here
 
@@ -343,8 +368,7 @@ void render()
 	glPushMatrix();
 	glColor3ub(150,160,220);
 	Vec *c = &g.particle[i].s.center;
-	w =
-	    h = 2;
+	w = h = 2;
 	glBegin(GL_QUADS);
 	glVertex2i(c->x-w, c->y-h);
 	glVertex2i(c->x-w, c->y+h);
